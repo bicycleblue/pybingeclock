@@ -9,45 +9,56 @@ def create_url(name):
 
     return(url)
 
-def parse_body(body):
-    regex = r'date_counter_cont.*span class="date_num">(\d+)</span>.*date_counter_cont.*span class="date_num">(\d+)</span>.*date_counter_cont.*span class="date_num">(\d+)</span>'
 
-    m = re.search(regex, body)
+def parse_body(body):
+    # look for 1-3 of "<span class="date_num">NUMBER</span>", if all three, D H M. If less, H M or M
+    regex = r'<span class="date_num">(\d+)</span>'
+
+    m = re.findall(regex, body)
+
     if m:
-        print(m.groups())
-        return(int(m.group(1)), int(m.group(2)), int(m.group(3)))   # int maybe with some error checking?
+        while len(m) < 3:    # insert 0 for missing D H values
+            m.insert(0, 0)
+
+        return((int(m[0]), int(m[1]), int(m[2])))
     else:
-        print("m bad {}".format(repr(m)))
         return(())
+
 
 def bingeclock_series(name):
     url = create_url(name)
     try:
         resp = requests.get(url)
         if resp.status_code != 200:
-            print("error from website")
-            return("")
-        print("good fetch")
+            return(())
     except:
-        print("error fetching series")
-        return("")
+        return(())
 
-    (days, hours, minutes) = parse_body(resp.text)
-    print("found d {} m {} h {}".format(days, hours, minutes))
+    tup = parse_body(resp.text)
 
-    return((days, hours, minutes))
+    return(tup)
 
 
 def main():
     print("running tests")
 
-    tup = bingeclock_series("avatar-the-last-airbender")
-    if tup == (1, 6, 30):
-        print("correct")
+    clock = bingeclock_series("avatar-the-last-airbender")  # normal, 3 numbers expected
+    if clock == (1, 6, 30):
+        print("ATLA: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
     else:
-        print("wrong")
+        print("ATLA: fail")
 
-    # need a short and a long series to test max things
+    clock = bingeclock_series("tiger-king")  # 5:17, no days
+    if clock and clock == (0, 5, 17):
+        print("Joe Exotic: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    else:
+        print("Joe Exotic: fail")
+
+    clock = bingeclock_series("the-chilling-adventures-of-dolph-lundgren")  # doesn't exist
+    if clock:
+        print("Dolph found, fail: {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    else:
+        print("Dolph not found, success")
 
 
 if __name__ == "__main__":
