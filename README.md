@@ -46,3 +46,54 @@ dev notes
 
 doesn't do search
 
+#!/usr/bin/env python3
+
+from bingeclock import bingeclock_series
+import unittest
+
+
+
+Examples from earlier version for docs
+
+
+def main():
+    clock = bingeclock_series("avatar-the-last-airbender")  # normal, 3 numbers expected
+    if clock == (1, 6, 30):
+        print("ATLA: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    else:
+        print("ATLA: fail")
+
+    clock = bingeclock_series("days-of-our-lives", hours=4)  # hours per day, will only return answer in days
+    if clock and len(clock) == 1 and clock == (2821,):
+        print("Days: success {} days".format(clock[0]))
+    else:
+        print("Days: fail")
+
+    clock = bingeclock_series("avatar-the-last-airbender", commercials=False)  # cut commerials+credits
+    if clock and clock == (0, 22, 22):
+        print("ATLA: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    else:
+        print("ATLA: fail")
+
+    clock = bingeclock_series("avatar-the-last-airbender", commercials=False, hours=7)  # fail, can't use both optionals
+    if clock and clock == (0, 22, 22):
+        print("ATLA: fail {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    else:
+        print("ATLA: both options disallowed, success")
+
+    clock = bingeclock_series("tiger-king")  # 5:17, no days
+    if clock and clock == (0, 5, 17):
+        print("Joe Exotic: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    else:
+        print("Joe Exotic: fail")
+
+    clock = bingeclock_series("the-chilling-adventures-of-dolph-lundgren")  # doesn't exist
+    if clock:
+        print("Dolph found, fail: {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    else:
+        print("Dolph not found, success")
+
+
+if __name__ == "__main__":
+    unittest.main()
+
