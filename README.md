@@ -1,13 +1,31 @@
 # pybingeclock
 python module to query bingeclock.com
 
-examples of usage
+# setup
 
-two functions
-return tuple of days, hours, minutes
+Grab bingeclock.py from this repo and drop it where you'd like.
 
+# usage
 
-have to know exact string from bingeclock, show example
+See the examples.py for some examples of usage. The two functions return a tuple of (days, hours, minutes) to watch a series or movie marathon. If an error occurs it gives you back an empty tuple.
+
+Basically there are two functions:
+
+## bingeclock_series(title)
+
+Get the time to binge a series. Specify the title in the format of the bingeclock.com URL for that title. example: "avatar-the-last-airbender" for the search https://www.bingeclock.com/s/avatar-the-last-airbender/. Yea, you have to go and manually query bingeclock to get the string to then search for again. Search is yet to be implemented.
+
+bingeclock_series() can take either of two optional arguments.
+
+commercials=False removes commercials and credits time from the returned binge time.
+
+hours=8 will limit binging to a specified number of hours per day, and just tells you how many days it will take. The site lists 1-16 hours per day, but will take any reasonable positive integer).
+
+## bingeclock_marathon(title)
+
+Get the time to binge a movie marathon. Similar idea as above, find one of their movie marathon lists and you can query it by name from the url.
+
+# developer notes
 
 url formats
 https://www.bingeclock.com/s/series-name/
@@ -42,58 +60,9 @@ test -v
 
 ./test_bingeclock.py -v TestBingeClock.test_marathon_valid
 
-dev notes
 
-doesn't do search
+# todo
 
-#!/usr/bin/env python3
-
-from bingeclock import bingeclock_series
-import unittest
-
-
-
-Examples from earlier version for docs
-
-
-def main():
-    clock = bingeclock_series("avatar-the-last-airbender")  # normal, 3 numbers expected
-    if clock == (1, 6, 30):
-        print("ATLA: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
-    else:
-        print("ATLA: fail")
-
-    clock = bingeclock_series("days-of-our-lives", hours=4)  # hours per day, will only return answer in days
-    if clock and len(clock) == 1 and clock == (2821,):
-        print("Days: success {} days".format(clock[0]))
-    else:
-        print("Days: fail")
-
-    clock = bingeclock_series("avatar-the-last-airbender", commercials=False)  # cut commerials+credits
-    if clock and clock == (0, 22, 22):
-        print("ATLA: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
-    else:
-        print("ATLA: fail")
-
-    clock = bingeclock_series("avatar-the-last-airbender", commercials=False, hours=7)  # fail, can't use both optionals
-    if clock and clock == (0, 22, 22):
-        print("ATLA: fail {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
-    else:
-        print("ATLA: both options disallowed, success")
-
-    clock = bingeclock_series("tiger-king")  # 5:17, no days
-    if clock and clock == (0, 5, 17):
-        print("Joe Exotic: success {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
-    else:
-        print("Joe Exotic: fail")
-
-    clock = bingeclock_series("the-chilling-adventures-of-dolph-lundgren")  # doesn't exist
-    if clock:
-        print("Dolph found, fail: {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
-    else:
-        print("Dolph not found, success")
-
-
-if __name__ == "__main__":
-    unittest.main()
+* implement search for titles
+* maybe raise an exception on error instead of just returning an empty tuple
 
