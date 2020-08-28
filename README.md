@@ -1,7 +1,9 @@
 # pybingeclock
 python module to query bingeclock.com
 
-DISCLAIMERS XXX
+# disclaimer
+
+This is not published by or endorsed by bingeclock.com. Just an unsolicited API that isn't terribly useful. This project cannot validate the data put out by bingeclock.com is accurate.
 
 # setup
 
