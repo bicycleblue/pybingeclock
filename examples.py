@@ -12,14 +12,14 @@ def main():
     clock = bingeclock_series("avatar-the-last-airbender", commercials=False)
     print("Aang, no commercials/credits: {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
 
-    # request time given 8 hours a day of binging
+    # request number of days to binge, 8 hours a day
     clock = bingeclock_series("avatar-the-last-airbender", hours=8)
-    print("Aang, 8 hours/day: {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))
+    print("Aang, 8 hours/day: {} days, {} hours, and {} minutes".format(*clock))
 
     (days, hours, minutes) = bingeclock_series("tiger-king")
     print("Joe Exotic: {} days, {} hours, and {} minutes".format(days, hours, minutes))
 
-    # on error, you get back an empty tuple
+    # on error, silently returns an empty tuple
     clock = bingeclock_series("the-chilling-adventures-of-dolph-lundgren")
     if clock:
         print("Dolph found: {} days, {} hours, and {} minutes".format(clock[0], clock[1], clock[2]))

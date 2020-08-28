@@ -1,13 +1,15 @@
 # pybingeclock
 python module to query bingeclock.com
 
+DISCLAIMERS XXX
+
 # setup
 
 Grab bingeclock.py from this repo and drop it where you'd like.
 
 # usage
 
-See the examples.py for some examples of usage. The two functions return a tuple of (days, hours, minutes) to watch a series or movie marathon. If an error occurs it gives you back an empty tuple.
+See the examples.py for some examples of usage. The two functions return a tuple of (days, hours, minutes) to watch a series or movie marathon. If an error occurs they silently return an empty tuple.
 
 Basically there are two functions:
 
@@ -27,39 +29,39 @@ Get the time to binge a movie marathon. Similar idea as above, find one of their
 
 # developer notes
 
-url formats
+## series
+```
 https://www.bingeclock.com/s/series-name/
 https://www.bingeclock.com/s/series-name/al  - no commercials/credits
-https://www.bingeclock.com/s/series-name/daily/#  - hours per day
-no way to do al and daily together?
+https://www.bingeclock.com/s/series-name/daily/#  - hours per day, returns just days
+```
+It doesn't appear possible to ask for both no commercials and hours per day
 
+## marathons
+```
 https://www.bingeclock.com/film/marathon/marathon-name/
-no options for marathons
-multiple marathons may exist, check for -1, -2 at end of name
+```
 
-series
-basic return: D:H:M
-some omit day, maybe hour, those don't display
+No options available for marathons. Multiple marathons may exist, check for -1, -2 at end of name.
 
-parsing: search for <span class="date_num">1</span>
-to find the numbers of D:H:M
+## parsing the HTML
 
-search for <span class="date_type">day</span>
-to find day / hours / minutes
-or in marathons, days is plural and hour is singular
-to find days / hour / minutes
+They only print non-zero values. If something adds up to an even number of hours, you won't get a minutes value. Same for days on short items.
 
-exception on marathons, https://www.bingeclock.com/film/marathon/star-wars-1/
-returns 1 day 1 hour, no minutes displayed
+After several attempts it looks like the best way to extract the data and get the Days, Hours, and Minutes right is to look for "date_num" to get the numbers for each d:h:m, then look for "date_type" to get which values are present in the HTML.
 
-errors in searches don't have an error page, they throw up a junk entry with a note:
-Updated: Dec 31st 1969 at 7:00 pm
+<span class="date_num">1</span>
+<span class="date_type">day</span>
 
+They're not consistent between series and marathons, date_type may be day or days, or hour and hours.
 
-test -v
+They don't give a consistent error message for a title not found. Seaching for the string "Updated: Dec 31st 1969 at 7:00 pm" seems to work pretty well.
 
+## untitest
+
+```
 ./test_bingeclock.py -v TestBingeClock.test_marathon_valid
-
+```
 
 # todo
 
